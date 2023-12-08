@@ -1,0 +1,21 @@
+{
+  "name": "com.vladimirklubkov.terrainlayerstool",
+  "version": "1.0.0",
+  "displayName": "Terrain Layers Tool",
+  "description": "Set of Unity Editor tools that allow you to deal with terrain layers (count, remove, merge, automatically remove unused). Useful for optimization, especially for tiled terrains. WARNING: the operations cannot be undone! Backup your project first!",
+  "unity": "2022.3",
+  "unityRelease": "13f1",
+  "keywords": [
+    "Terrain",
+    "Layer",
+    "Tool"
+  ],
+  "license": "MIT",
+  "licensesUrl": "https://github.com/marked-one/TerrainLayersTool/blob/main/LICENSE.md",
+  "changelogUrl": "https://github.com/marked-one/TerrainLayersTool/releases/tag/1.0.0",
+  "documentationUrl": "https://github.com/marked-one/TerrainLayersTool",
+  "author": {
+    "name": "Vladimir Klubkov",
+    "url": "https://github.com/marked-one"
+  }
+}
