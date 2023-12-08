@@ -10,7 +10,7 @@ Set of Unity Editor tools that allow you to deal with terrain layers (count, rem
 ## Installation
 
 - Option 1: via Package Manager, press the + button and select `Add package from git URL..`, then paste `
-- https://github.com/marked-one/TerrainLayersTool.git`. Or use the format `https://github.com/marked-one/TerrainLayersTool.git#1.0.0` to target a particular version (1.0.0 in this case).
+- `https://github.com/marked-one/TerrainLayersTool.git`. Or use the format `https://github.com/marked-one/TerrainLayersTool.git#1.0.0` to target a particular version (1.0.0 in this case).
 
 
 - Option 2: clone or download this repository. Via Package Manager, press the + button and select `Add package from disk..`. Then target the `package.json` manifest.
