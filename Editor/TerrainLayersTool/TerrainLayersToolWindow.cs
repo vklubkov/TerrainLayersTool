@@ -41,6 +41,7 @@ namespace TerrainLayersTool {
             DrawLayerUsageReporter();
             DrawLayerRemove();
             DrawLayerMerge();
+            DrawNormalizeLayers();
             DrawRemoveEmptyLayers();
         }
 
@@ -286,9 +287,111 @@ namespace TerrainLayersTool {
             }
         }
 
+        void DrawNormalizeLayers() {
+            GUILayout.Space(15);
+            GUILayout.Label("4. NORMALIZE LAYERS");
+
+            EditorGUILayout.HelpBox("Makes the sum of all layers always be around 1 in every point of terrain. " +
+                                    "Also fixes the dead pixels of the splatmap by blending the neighbor pixels. " +
+                                    "Useful for when you remove layers or scale the splatmaps.",
+                                    MessageType.Info);
+
+            EditorGUILayout.HelpBox(
+                "WARNING! THIS OPERATION CANNOT BE UNDONE! BACKUP YOUR PROJECT BEFORE PROCEEDING!",
+                MessageType.Warning);
+
+            if (GUILayout.Button("Normalize layers"))
+                ProcessTerrains(_terrainRoot, NormalizeTerrainLayers, SaveAssets);
+        }
+
+        static void NormalizeTerrainLayers(string terrainName, TerrainData terrainData) {
+            var terrainLayers = terrainData.terrainLayers;
+            var alphamapWidth = terrainData.alphamapWidth;
+            var alphamapHeight = terrainData.alphamapHeight;
+            var alphamaps = terrainData.GetAlphamaps(0, 0, alphamapWidth, alphamapHeight);
+
+            for (var x = 0; x < alphamapWidth; x++)
+            for (var y = 0; y < alphamapHeight; y++) {
+                var sumOfLayersWithoutData = 0f;
+                var sumOfLayersWithData = 0f;
+                var layersWithData = new List<int>();
+                for (var i = 0; i < terrainLayers.Length; i++) {
+                    var value = alphamaps[x, y, i];
+                    if (Mathf.Approximately(value, 0))
+                        sumOfLayersWithoutData += value;
+                    else {
+                        layersWithData.Add(i);
+                        sumOfLayersWithData += value;
+                    }
+                }
+
+                if (Mathf.Approximately(sumOfLayersWithData, 0f)) {
+                    for (var i = 0; i < terrainLayers.Length; i++)
+                        FixEmptyPixelInLayer(x, y, i, alphamaps);
+
+                    // Run normalization again after blending the neighbors.
+                    x--;
+                    y--;
+                    continue;
+                }
+
+                var multiplier =  (1f - sumOfLayersWithoutData) / sumOfLayersWithData;
+                foreach (var layer in layersWithData) {
+                    var value = alphamaps[x, y, layer];
+                    value *= multiplier;
+                    alphamaps[x, y, layer] = value;
+                }
+            }
+
+            terrainData.SetAlphamaps(0, 0, alphamaps);
+        }
+
+        static void FixEmptyPixelInLayer(int x, int y, int layer, float[,,] alphamaps) {
+            var sum = 0f;
+            var count = 0;
+            for (var i = x - 1; i <= x + 1; i++)
+            for (var j = y - 1; j <= y + 1; j++) {
+                if (i == x && j == y)
+                    continue;
+
+                if (!TryGetAlphamapValue(i, j, layer, alphamaps, out var value))
+                    continue;
+
+                sum += value;
+                count++;
+            }
+
+            alphamaps[x, y, layer] = sum / count;
+        }
+
+        static bool TryGetAlphamapValue(int x, int y, int layer, float[,,] alphamaps, out float value) {
+            if (x < 0) {
+                value = 0f;
+                return false;
+            }
+
+            if (x >= alphamaps.GetLength(0)) {
+                value = 0f;
+                return false;
+            }
+
+            if (y < 0) {
+                value = 0f;
+                return false;
+            }
+
+            if (y >= alphamaps.GetLength(1)) {
+                value = 0f;
+                return false;
+            }
+
+            value = alphamaps[x, y, layer];
+            return true;
+        }
+
         void DrawRemoveEmptyLayers() {
             GUILayout.Space(15);
-            GUILayout.Label("4. REMOVE EMPTY LAYERS");
+            GUILayout.Label("5. REMOVE EMPTY LAYERS");
 
             EditorGUILayout.HelpBox("Removes unused terrain layers and rearranges the remaining layers reducing " +
                                     "layer count by the number of empty layers. Especially useful for multi-terrain " +
