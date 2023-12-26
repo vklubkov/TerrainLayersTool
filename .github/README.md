@@ -1,6 +1,6 @@
 # Terrain Layers Tool
 
-Set of Unity Editor tools that allow you to deal with terrain layers (count, remove, merge, automatically remove unused). Useful for optimization, especially for tiled terrains.
+Set of Unity Editor tools that allow you to deal with terrain layers (count, remove, merge, normalize, automatically remove unused). Useful for optimization, especially for tiled terrains.
 
 **WARNING: the operations cannot be undone! Backup your project first!**
 
