@@ -8,8 +8,8 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-namespace TerrainLayersTool {
-    public class TerrainLayersToolWindow : EditorWindow {
+namespace TerrainLayerTools {
+    public class TerrainLayerToolsWindow : EditorWindow {
         Vector2 _scrollPosition;
 
         GameObject _terrainRoot;
@@ -22,10 +22,10 @@ namespace TerrainLayersTool {
         int _layerToMerge;
         int _layerToMergeInto;
 
-        [MenuItem("Tools/Terrain Layers Tool")]
+        [MenuItem("Tools/Terrain Layer Tools")]
         public static void ShowWindow() {
-            var window = GetWindow<TerrainLayersToolWindow>();
-            window.titleContent = new GUIContent("Terrain Layers Tool");
+            var window = GetWindow<TerrainLayerToolsWindow>();
+            window.titleContent = new GUIContent("Terrain Layer Tools");
             window.minSize = new Vector2(350, 150);
         }
 
@@ -491,7 +491,7 @@ namespace TerrainLayersTool {
 
                 for (var i = 0; i < childCount; i++, progressIndex++) {
                     EditorUtility.DisplayProgressBar(
-                        "Terrain Layers Tool",
+                        "Terrain Layer Tools",
                         $"Processing terrain tile {progressIndex} of {progressTarget}",
                         i / (float)progressTarget);
 
